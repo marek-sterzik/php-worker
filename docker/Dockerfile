@@ -7,13 +7,9 @@ COPY mikenopa-docker-utils /tmp/mikenopa-docker-utils
 COPY installer /tmp/installer
 RUN /tmp/installer
 
-COPY php-fpm.conf /etc/php/$PHPVER/fpm/php-fpm.conf.template
-COPY entrypoint.sh /usr/bin/entrypoint.sh
-COPY bootenv /usr/bin/bootenv
-COPY x /usr/bin/x
-COPY xdebug.ini /etc/php/$PHPVER/mods-available/xdebug.ini.template
-COPY nginx.conf /etc/nginx/nginx.conf.template
-COPY worker.conf /etc/nginx/worker.conf.template
+COPY bin/ /usr/bin/
+COPY php/ /etc/php/$PHPVER/
+COPY nginx-config/ /etc/nginx/
 
 EXPOSE 80
 WORKDIR /app
