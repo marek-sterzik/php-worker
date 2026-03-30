@@ -4,6 +4,7 @@ set -e
 packages=(ca-certificates gpg git nginx openssl openssh-client zip "php$PHPVER")
 packages_preinstall=(apt-transport-https gnupg2 iproute2 cron apt curl)
 php_packages=(fpm cli bcmath common curl dev dom intl mbstring mysql opcache readline redis sqlite xdebug xml zip gd snmp)
+forbidden_php_packages=(php8.5-opcache)
 
 add_apt_repository() {
     local id
@@ -55,10 +56,22 @@ install_deb() {
     rm -f "/tmp/$file"
 }
 
+is_not_forbidden() {
+    for p in "${forbidden_php_packages[@]}"; do
+        if [ "$p" = "$1" ]; then
+            return 1
+        fi
+    done
+    return 0
+}
+
 
 
 for php_package in "${php_packages[@]}"; do
-    packages+=("php$PHPVER-$php_package")
+    php_package_full="php$PHPVER-$php_package"
+    if is_not_forbidden "$php_package_full"; then
+        packages+=("$php_package_full")
+    fi
 done
 
 apt-get -y update

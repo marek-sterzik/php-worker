@@ -14,6 +14,13 @@ x "\$cmd" "\$@"
 END
 }
 
+get_max_body_size_php_statement() {
+    local size
+    size="$1"
+    echo "php_admin_value[upload_max_filesize] = ${size^^}"
+    echo "php_admin_value[post_max_size] = ${size^^}"
+}
+
 echo "Starting container..." 1>&2
 
 export ENTRYPOINT=1
@@ -79,7 +86,7 @@ export MAX_BODY_SIZE_PHP_STATEMENT=""
 export MEMORY_LIMIT_STATEMENT=""
 if [ -n "$MAX_BODY_SIZE" ]; then
     MAX_BODY_SIZE_STATEMENT="client_max_body_size $MAX_BODY_SIZE;"
-    MAX_BODY_SIZE_PHP_STATEMENT="php_admin_value[upload_max_filesize] = ${MAX_BODY_SIZE^^}"
+    MAX_BODY_SIZE_PHP_STATEMENT="`get_max_body_size_php_statement "$MAX_BODY_SIZE"`"
 fi
 if [ -n "$MEMORY_LIMIT" ]; then
     MEMORY_LIMIT_STATEMENT="php_admin_value[memory_limit] = $MEMORY_LIMIT"
