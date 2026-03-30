@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+image="mareksterzik/php-worker"
+php_versions=(8.5 8.4 8.3 8.2)
+latest_php_version=8.5
+
+cd "`dirname "$0"`/.."
+
+no_de_warned=""
+invoke_de() {
+    if which de > /dev/null 2>&1; then
+        de "$@"
+    else
+        if [ -z "$no_de_warned" ]; then
+            echo "Warning: de script not found, using global docker environment" 1>&2
+            no_de_warned=1
+        fi
+        "$@"
+    fi
+}
+
+for php_version in "${php_versions[@]}"; do
+    echo "Building worker for PHP$php_version"
+    tags=(php$php_version)
+    if [ "$php_version" = "$latest_php_version" ]; then
+        tags+=("latest")
+    fi
+    build_tag_args=()
+    for tag in "${tags[@]}"; do
+        build_tag_args+=(-t "$image:$tag")
+    done
+    invoke_de docker build --build-arg PHP_VERSION="$php_version" "${build_tag_args[@]}" docker
+
+    for tag in "${tags[@]}"; do
+        invoke_de docker push "$image:$tag"
+    done
+done
