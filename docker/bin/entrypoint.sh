@@ -106,7 +106,7 @@ envwrite -o /etc/nginx/nginx.conf /etc/nginx/nginx.conf.template
 envwrite -o /etc/php/$PHPVER/fpm/php-fpm.conf /etc/php/$PHPVER/fpm/php-fpm.conf.template
 
 touch /var/log/php-fpm.log /var/run/nginx.pid
-chown -R "$SERVER_UID:$SERVER_GID" /var/log/phpfpm /run/php /var/log/php-fpm.log /var/log/nginx /var/lib/nginx /var/run/nginx.pid 
+chown -R "$SERVER_UID:$SERVER_GID" /var/log/phpfpm /run/php /var/log/php-fpm.log /var/log/nginx /var/cache/nginx /var/run/nginx.pid 
 
 
 if [ -x "/app/bin/docker-boot" -o "/app/bin/docker-boot-root" ]; then
